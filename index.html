@@ -59,10 +59,10 @@ body{
 .tapa{
     width:100%;
     height:100%;
-    background:#ffd1dc;
+    background:linear-gradient(180deg,#ffd1dc,#ffc2d1);
     clip-path: polygon(0 0,100% 0,50% 60%);
     transform-origin:top;
-    transition:transform 1s ease;
+    transition:transform 1s cubic-bezier(.68,-0.6,.32,1.6);
     border-radius:14px;
 }
 
@@ -78,15 +78,16 @@ body{
     left:4%;
     top:10px;
     opacity:0;
-    transform:translateY(40px) scale(.95);
-    transition:all .9s ease .5s;
+    transform:translateY(40px) scale(.92);
+    transition:all 1s ease .5s;
     border-radius:14px;
-    box-shadow:0 10px 25px rgba(0,0,0,.25);
+    box-shadow:0 20px 40px rgba(0,0,0,.25);
+    filter:brightness(.98) contrast(1.05);
 }
 
 .sobre.abierto .cartaImg{
     opacity:1;
-    transform:translateY(0px) scale(1);
+    transform:translateY(-100px) scale(1);
 }
 
 /* BOTONES */
@@ -111,10 +112,34 @@ button{
     opacity:.6;
     pointer-events:none;
 }
+button{
+    margin-top:220px;
+    padding:18px 26px;
+    border:none;
+    border-radius:30px;
+    font-size:18px;
+    cursor:pointer;
+    background:white;
+    box-shadow:0 8px 20px rgba(0,0,0,.2);
+    transition:transform .15s;
+}
+
+button:active{
+    transform:scale(.95);
+}
 
 @keyframes caer{
     from{ transform:translateY(-10vh);}
     to{ transform:translateY(110vh);}
+}
+@keyframes brillo {
+  0% { filter:brightness(.9); }
+  50% { filter:brightness(1.15); }
+  100% { filter:brightness(1); }
+}
+
+.sobre.abierto .cartaImg{
+    animation: brillo 1.2s ease;
 }
 </style>
 </head>
@@ -156,35 +181,58 @@ escribir();
 function abrir(){
     document.getElementById("sobre").classList.add("abierto");
     document.getElementById("btn2").style.display="block";
-    document.getElementById("musica").play().catch(()=>{});
+
+    const m = document.getElementById("musica");
+    m.volume = 0;
+    m.play().catch(()=>{});
+
+    let v = 0;
+    const fade = setInterval(()=>{
+        v += 0.05;
+        m.volume = Math.min(v,1);
+        if(v>=1) clearInterval(fade);
+    },120);
 }
 
 /* segunda carta */
 function segunda(){
-    document.getElementById("img1").style.display="none";
-    document.getElementById("img2").style.display="block";
+    const a = document.getElementById("img1");
+    const b = document.getElementById("img2");
+
+    a.style.opacity = 0;
+    a.style.transform = "translateY(-0vh) scale(.9)";
+
+    setTimeout(()=>{
+        a.style.display="none";
+        b.style.display="block";
+        setTimeout(()=>{
+            b.style.opacity=1;
+            b.style.transform="translateY(-7vh) scale(1)";
+        },50);
+    },400);
+
     document.getElementById("btn2").style.display="none";
     document.getElementById("final").style.display="block";
 }
 
 /* mensaje final */
 function mensajeFinal(){
-    alert("Feliz San Valentín 💖\nGracias por todo lo que compartimos.\nSos muy especial.");
+    alert("Feliz dia 💖\ngracias por estar para mi, sos muy especial.");
 }
 
 /* corazones */
-for(let i=0;i<25;i++){
+for(let i=0;i<30;i++){
     let h=document.createElement("div");
     h.className="corazon";
-    h.innerHTML="💗";
+    h.innerHTML=Math.random()>0.5 ? "💗" : "💖";
     h.style.left=Math.random()*100+"vw";
-    h.style.fontSize=(14+Math.random()*18)+"px";
-    h.style.animationDuration=(5+Math.random()*5)+"s";
-    h.style.animationDelay=Math.random()*5+"s";
+    h.style.fontSize=(12+Math.random()*22)+"px";
+    h.style.animationDuration=(6+Math.random()*6)+"s";
+    h.style.animationDelay=Math.random()*6+"s";
+    h.style.opacity = 0.4 + Math.random()*0.6;
     document.body.appendChild(h);
 }
 </script>
 
 </body>
 </html>
-
